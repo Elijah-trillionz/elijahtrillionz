@@ -1,12 +1,13 @@
-import Header from '../components/Header';
+import Header from "../components/Header";
+import { MainMaxWidthWrapper } from "../components/styles/Global";
+import Footer from "../components/Footer";
 
 const Layout = ({ children }) => {
   return (
     <div>
       <Header />
-      <main className='max-width-container' style={{ padding: '50px 30px' }}>
-        {children}
-      </main>
+      <MainMaxWidthWrapper>{children}</MainMaxWidthWrapper>
+      <Footer />
     </div>
   );
 };

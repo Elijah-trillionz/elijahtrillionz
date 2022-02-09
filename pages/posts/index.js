@@ -1,24 +1,32 @@
-import getPosts from '../../scripts/fileSystem';
-import PostItem from '../../components/PostItem';
-import styles from '../../styles/Home.module.css';
-import Meta from '../../components/Meta';
+import getPosts from "../../scripts/fileSystem";
+import PostItem from "../../components/PostItem";
+import Meta from "../../components/Meta";
+import { PostItems, StyledHome } from "../../components/styles/Home.styled";
+import { timestampDate } from "../../scripts/date";
 
 const index = ({ posts }) => {
   return (
-    <div>
-      <Meta title='Blog posts - PressBlog' />
-      <p className={styles.desc}>All Posts</p>
-      {posts.map((post) => (
-        <PostItem key={post.slug} post={post} className={styles.postItem} />
-      ))}
-    </div>
+    <StyledHome>
+      <PostItems blog={true}>
+        <Meta title="All Articles - Elijah Trillionz" />
+        <span>All Articles</span>
+        {posts.map((post) => (
+          <PostItem key={post.slug} post={post} />
+        ))}
+      </PostItems>
+    </StyledHome>
   );
 };
 
 export default index;
 
 export const getStaticProps = () => {
-  const posts = getPosts(false);
+  const posts = getPosts(false).map((post) => {
+    post.timestamp = timestampDate(...post.data.publishedOn);
+    return post;
+  });
+
+  posts.sort((a, b) => b.timestamp - a.timestamp);
 
   return {
     props: {

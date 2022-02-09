@@ -1,23 +1,27 @@
-import Link from 'next/link';
-import styles from '../styles/Header.module.css';
+import Link from "next/link";
+import { StyledHeader } from "./styles/Header.styled";
+import { MaxWidthWrapper } from "./styles/Global";
 
 const Header = () => {
   return (
-    <header className={styles.header}>
-      <div className='max-width-container'>
-        <h2>
-          <Link href='/'>PressBlog</Link>
-        </h2>
+    <StyledHeader>
+      <MaxWidthWrapper>
+        <h1>
+          <Link href="/">Elijah Trillionz</Link>
+        </h1>
         <ul>
           <li>
-            <Link href='/posts'>Blog</Link>
+            <Link href="/posts">Blog</Link>
           </li>
           <li>
-            <Link href='/about'>About</Link>
+            <Link href="/tags/javascript">JavaScript</Link>
+          </li>
+          <li>
+            <Link href="/tags/css">CSS</Link>
           </li>
         </ul>
-      </div>
-    </header>
+      </MaxWidthWrapper>
+    </StyledHeader>
   );
 };
 

@@ -1,14 +1,28 @@
-import Head from 'next/head';
+import { NextSeo } from "next-seo";
+import seoConfig from "../next-seo.config";
 
-const Meta = ({ title }) => {
+const Meta = ({ title, canonical, description, keywords }) => {
   return (
-    <Head>
-      <title>{title}</title>
-      <meta
-        name='keywords'
-        content='react native, blog, John Doe, tutorial, react navigation'
-      />
-    </Head>
+    <NextSeo
+      title={title}
+      description={description}
+      canonical={canonical}
+      additionalMetaTags={[
+        {
+          name: "keywords",
+          content: keywords,
+        },
+      ]}
+      openGraph={{
+        type: "article",
+        url: seoConfig.url,
+        title: title,
+        description: description,
+        images: seoConfig.images,
+        site_name: "Elijah Trillionz",
+      }}
+      twitter={seoConfig.twitter}
+    />
   );
 };
 
@@ -16,5 +30,8 @@ export default Meta;
 
 // let's set a default title
 Meta.defaultProps = {
-  title: 'PressBlog - Your one stop blog for everything React Native',
+  title: seoConfig.defaultTitle,
+  description: seoConfig.defaultDescription,
+  canonical: seoConfig.url,
+  keywords: seoConfig.defaultKeywords,
 };

@@ -1,31 +1,34 @@
-import MeetMe from '../components/MeetMe.js';
-import Link from 'next/link';
-import getPosts from '../scripts/fileSystem';
-import PostItem from '../components/PostItem';
-import styles from '../styles/Home.module.css';
-import Meta from '../components/Meta';
+import MeetMe from "../components/MeetMe.js";
+import getPosts from "../scripts/fileSystem";
+import PostItem from "../components/PostItem";
+import Meta from "../components/Meta";
+import { PostItems, StyledHome } from "../components/styles/Home.styled";
+import { timestampDate } from "../scripts/date";
 
 const index = ({ posts }) => {
   return (
-    <>
-      <Meta title='PressBlog - Your one stop blog for anything React Native' />
+    <StyledHome>
+      <Meta />
       <MeetMe />
-      <Link href='/about'>More about me</Link>
-
-      <div className={styles.articleList}>
-        <p className={styles.desc}>Newly Published</p>
+      <PostItems>
+        <span>Newly Published Articles</span>
         {posts.map((post) => (
           <PostItem key={post.slug} post={post} />
         ))}
-      </div>
-    </>
+      </PostItems>
+    </StyledHome>
   );
 };
 
 export default index;
 
 export const getStaticProps = () => {
-  const posts = getPosts(10);
+  const posts = getPosts(10).map((post) => {
+    post.timestamp = timestampDate(...post.data.publishedOn);
+    return post;
+  });
+
+  posts.sort((a, b) => b.timestamp - a.timestamp);
 
   return {
     props: {
