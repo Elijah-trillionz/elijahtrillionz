@@ -17,7 +17,8 @@ const CodeHighlighter = ({
     props: { className, children },
   },
 }) => {
-  if (className.length >= 1) {
+  if (typeof className === 'string') {
+    console.log(className);
     const language = className.split('-').at(-1);
     const codeElement = () => {
       return {
