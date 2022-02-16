@@ -17,7 +17,7 @@ const CodeHighlighter = ({
     props: { className, children },
   },
 }) => {
-  const language = className.split('-').at(-1);
+  const language = className?.split('-').at(-1);
   const codeElement = () => {
     return {
       __html: prism.highlight(children, prism.languages[language], language),
@@ -43,7 +43,7 @@ const MDXComponents = {
   h4: (props) => <ArticleHeader {...props} as={'h4'} />,
   h5: (props) => <ArticleHeader {...props} as={'h5'} />,
   h6: (props) => <ArticleHeader {...props} as={'h6'} />,
-  pre: (props) => <CodeHighlighter {...props} className='some' />,
+  pre: (props) => <CodeHighlighter {...props} />,
 };
 
 export default MDXComponents;
