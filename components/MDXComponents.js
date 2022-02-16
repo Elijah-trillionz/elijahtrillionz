@@ -17,27 +17,19 @@ const CodeHighlighter = ({
     props: { className, children },
   },
 }) => {
-  if (typeof className === 'string' && className.length > 1) {
-    console.log('of class:', className);
-    const language = className.split('-').at(-1);
-    const codeElement = () => {
-      return {
-        __html: prism.highlight(children, prism.languages[language], language),
-      };
+  const inArr = className.split('-');
+  const language = inArr[inArr.length - 1];
+  const codeElement = () => {
+    return {
+      __html: prism.highlight(children, prism.languages[language], language),
     };
+  };
 
-    return (
-      <SyntaxHighlighter>
-        <code dangerouslySetInnerHTML={codeElement()} className='some-lang' />
-      </SyntaxHighlighter>
-    );
-  } else {
-    return (
-      <SyntaxHighlighter>
-        <code>Some thing here</code>
-      </SyntaxHighlighter>
-    );
-  }
+  return (
+    <SyntaxHighlighter>
+      <code dangerouslySetInnerHTML={codeElement()} className='some-lang' />
+    </SyntaxHighlighter>
+  );
 };
 
 const MDXComponents = {
