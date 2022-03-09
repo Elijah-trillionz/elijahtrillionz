@@ -18,7 +18,7 @@ const getPosts = (limit) => {
       const { data } = matter(fileContent);
 
       const slug = file.name.replace(/.mdx$/, "");
-      return { data, slug };
+      return !data.draft && { data, slug };
     })
     .filter((post) => post);
 

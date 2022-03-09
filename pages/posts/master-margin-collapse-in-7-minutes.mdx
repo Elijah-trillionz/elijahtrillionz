@@ -1,0 +1,567 @@
+---
+title: Master Margin Collapse in 7 Minutes
+publishedOn: [3, 2, 2022]
+excerpt:
+tags: ['css']
+draft: false
+---
+
+import ArticleMeta from '../../components/ArticleMeta';
+import Metadata from '../../components/Metadata';
+import ArticleTags from '../../components/ArticleTags';
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from '@reach/disclosure';
+
+<ArticleMeta
+  title='Master Margin Collapse in 7 Minutes - Elijah Trillionz'
+  datePublished={[3, 2, 2022]}
+/>
+
+<ArticleTags tags={['css']} />
+# Master Margin Collapse in 7 Minutes
+<Metadata date={[3, 2, 2022]} />
+
+Margin collapse is an interesting concept in CSS margins that you should know, understand and be conscious of. It is the process where you apply a margin of 10px on top, the bottom of an element, apply another 10px on top, the bottom of the next element, and end up having a 10px space between the two-element instead of 20px.
+
+```html
+<style>
+  p {
+    margin: 10px 0;
+  }
+</style>
+<body>
+  <p>Hello World</p>
+  <p>I am John Doe</p>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/NWwobZr'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+The space between `p` elements above is supposed to be 20px because 10+10=20 right? But then it's 10px. Why? How? This is margin collapse and in this article, I want to show you why, how, and help you master it in less than 7 minutes.
+
+<Disclosure>
+  <div className='disclosure'>
+  <DisclosureButton as='div' className='disclosure-btn'>
+    <i className='fas fa-caret-right' /> A good way to visualize the code examples in this article (like this one above) is to open op your devTools and inspect the elements (i.e p), hover over the element and the margins of the elements will pop up in a light orange color. Let's experiment with the example above:
+  </DisclosureButton>
+  <DisclosurePanel>
+    1. Open up your web dev tools
+    2. Click on the "arrow" icon at the top right of the dev tools or simply type `ctrl+shift+c`
+    3. Click on any of the `p` elements in the document, try clicking "Hello World"
+    4. In the element's dev tools section, hover over the element, and a light orange color will pop up; that is the margin
+    5. Hover over the other p element, and the same thing will happen, but you'd notice that it seems like the light orange color of the first element you hovered on is at the same position of the second; this is the effect of margin collapsing.
+
+    Use this method to go over the examples that will be used in this article.
+
+  </DisclosurePanel>
+  </div>
+</Disclosure>
+
+First, let's make a quick recap of what margins are and their usefulness. Margin is an important aspect of styling elements in CSS, it allows us to add spaces between elements, or as some might say gives breathing room to the element applied. Apart from the margin, there is also another guy in the [box model](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/The_box_model) padding that does the same thing as margin. But they are different and should be applied differently
+
+## Margin vs Padding
+
+One key difference is that **Margin** was designed for creating spaces between sibling elements whereas **Padding** was designed for creating spaces between a child and parent element. Understanding this changes everything.
+
+It is not that margins cannot be used to create spaces between a child and parent element (you may have probably done that) but you would have unexpected issues when margins start collapsing. Here is one of these issues
+
+```html
+<style>
+  .empty {
+    width: 100%;
+    height: 100px;
+    background: aqua;
+  }
+  .box {
+    background: orange;
+  }
+  h1 {
+    margin-top: 0;
+  }
+</style>
+<body>
+  <div class="empty"></div>
+  <div class="box">
+    <h1>I am not empty</h1>
+  </div>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/qBVzqKZ'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+Now that we have that setup, let's try to increase the space between the `h1` element and the `.box` element using the `margin-top` property. Change the value from `0` to `20px` and see what happens.
+
+Now it looks like we're pushing down the whole of the `.box` element, and we still don't see the space between the `h1` and `.box` elements. Try increasing it from `20px` to `200px`. Still no spaces? How? This is what happens when you use margin for creating spaces between a parent and a child element, they collapse, and then the purpose of margin is actualized between the `.empty` and `.box` elements. I will explain later.
+
+One other difference that will also be useful in the course of this article is the order of the box model. In the box model, we have in ascending order
+
+1. the height and width of the element
+2. the padding
+3. the border
+4. the margin
+
+This is one other thing that makes creating spaces between a child and parent element is more suitable with padding. Borders are the limit of an element, if you want to create a space between a child and parent element, whether you want to apply a border or not (to the parent element now) you should respect the border limit and create spaces between the border limits. And the only guy you can use to create spaces within the border limits is padding, not margin.
+
+Think of it this way, every country in the world has
+
+1. the residential areas (height and width of element)
+2. the spaces between residential areas and the border of the country (passing)
+3. the border of the country (border)
+4. and the spaces between the border of country A and border of country B (margin) - this can be 0 in some cases like North Korea and South Korea.
+
+So if a leader of country A wants to create more spaces between his/her country's residential areas and country B, the solution is not to increase the margin - because that may lead to a world war rather the solution is to increase the padding. As such country B will have no business with the leader because he/she is respecting its country's border limits.
+
+So try to hold on to the order of the box model, I will come back to it later.
+
+So now that we've gone through what margins are, let's jump right into margin collapse.
+
+## Margin Collapse
+
+Margin collapse happens when element A's margin overlaps element B's margin or vice versa based on [some conditions or rules](https://www.joshwcomeau.com/css/rules-of-margin-collapse/). Just two years ago we were all asked to maintain social distancing by maintaining a 6ft gap between you and every other person. Now what this means is that one person should have a 6ft margin around him/her.
+
+If John, for example, meets with Doe for a talk, though they have a 6ft personal space it doesn't mean that they must have a 12ft gap as per the social distancing. Social distancing says at least 6ft, so they can easily overlap their personal space to maintain a 6ft gap. This way I believe they can hear each other well enough.
+
+This is the way margin collapse works, it lets us establish the necessary amount of space between two elements. So now as a CSS developer, our role is to understand when we need our margins to collapse, when we should expect our margins to collapse, and when we shouldn't expect our margins to collapse.
+
+It's not as easy as "Oh cool, all margins collapse, really cool." No, not at all, there are times when margins don't collapse. So we might just expect two margins to collapse and give us `10px`, and all of a sudden we get `20px`. On the bright side, we can know when margins will and will not collapse.
+
+As such it won't be a matter of trial and error, but we'd be sure if it will collapse or not. There are some conditions/rules that margins rely on before they can collapse. We will quickly go over these conditions as
+
+### When Do Margins Collapse
+
+#### 1. When Vertical
+
+Only vertical margins collapse. The left and right margins of the two horizontal elements will not collapse.
+
+```html
+<style>
+  li {
+    display: inline-block;
+    margin: 0 10px;
+  }
+</style>
+<body>
+  <ul>
+    <li>Item One</li>
+    <li>Item Two</li>
+    <li>Item Three</li>
+  </ul>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/QWOXGXo'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+You'd notice that the margins between the `li` elements are 20px each, vertically this would not happen, because it will collapse to give us 10px:
+
+```html
+<style>
+  li {
+    display: block;
+    margin: 10px 0;
+  }
+</style>
+<body>
+  <ul>
+    <li>Item One</li>
+    <li>Item Two</li>
+    <li>Item Three</li>
+  </ul>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/LYOKxpL'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+**NOTE:** You should note that when two margins collapse the bigger margin always wins, from the example above if we make the middle `li` to have a margin of 20px, we will end up with both the first and last `li` having a margin of 20px in the bottom and top respectively.
+
+#### 2. When the parent element is in flow layout
+
+Margins of nested elements whose parent is not in flow layout will not collapse. There are multiple layouts on the web, that is flow layout, grid layout, flex layout.
+
+Just like from the example above, the parent element `ul` is in a flow layout, so the margins of the child elements will collapse. Even if the parent element is `body`, it will collapse because `body` is also in flow layout
+
+```html
+<style>
+  h1,
+  p {
+    margin: 10px 0;
+  }
+</style>
+<body>
+  <h1>Hello World!</h1>
+  <p>Have you been to Dubai?</p>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/NWwZdGJ'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+But this will not be the case if we set the parent element to `flex` or `grid`.
+
+```html
+<style>
+  body {
+    display: grid;
+  }
+  h1,
+  p {
+    margin: 10px 0;
+  }
+</style>
+<body>
+  <h1>Hello World!</h1>
+  <p>Have you been to Dubai?</p>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/GRObroG'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+So basically from conditions 1 to 2, we've seen that only margins of block elements will collapse.
+
+#### 3. When an element is not absolutely positioned or floating
+
+When an element is absolutely positioned or floating, its margin will not collapse. It will also not collapse if the element is not fixed.
+
+```html
+<style>
+  h1 {
+    position: absolute; /* or fixed */
+  }
+  p,
+  h1 {
+    margin: 10px 0;
+  }
+</style>
+<body>
+  <h1>Hello World!</h1>
+  <p>Have you been to Dubai?</p>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/RwjzKaM'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+Also when an element is floating, margin collapse is disregarded
+
+```html
+<style>
+  p,
+  h1 {
+    float: right;
+    clear: both;
+    margin: 10px 0;
+  }
+</style>
+<body>
+  <h1>Hello World!</h1>
+  <p>Have you been to Dubai?</p>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/qBVzRNj'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+#### 4. When siblings are adjacent and not obstructed
+
+So far we've been seeing sibling elements collapse or not collapse based on some predefined style on the parent or child element. But margins of two or more elements can be stopped from collapsing when there obstructing elements like `hr` or `br`.
+
+```html
+<style>
+  p,
+  h1 {
+    margin: 10px 0;
+  }
+</style>
+<body>
+  <h1>Hello World!</h1>
+  <br />
+  <p>Have you been to Dubai?</p>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/gOXNgwd'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+Even the tiniest bit of height for an empty element can obstruct margin collapsing.
+
+```html
+<style>
+  p,
+  h1 {
+    margin: 10px 0;
+  }
+  span {
+    display: block;
+    height: 0.1px;
+  }
+</style>
+<body>
+  <h1>Hello World!</h1>
+  <span></span>
+  <p>Have you been to Dubai?</p>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/LYOKxbj'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+So the elements have to be adjacent (touching) for it to collapse.
+
+#### 5. When you do the weird thing
+
+I know you must be curious to find out what this weird thing is, well I already made mention of it earlier. The weird thing is using margin to create spaces between child and parent elements instead of padding. Now it is only weird to me, it can be totally fine with you as long as you know the maneuverings of it.
+
+And yeah, that's what am going to talk about here in this section, how to maneuver your way to using margins for creating spaces between child and parent elements without having the problem we had earlier. That is:
+
+```html
+<style>
+  .empty {
+    width: 100%;
+    height: 100px;
+    background: aqua;
+  }
+  .box {
+    background: orange;
+  }
+  h1 {
+    margin-top: 0;
+  }
+</style>
+<body>
+  <div class="empty"></div>
+  <div class="box">
+    <h1>I am not empty</h1>
+  </div>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/qBVzqKZ'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+We said if you increase the `margin-top` of the `h1` tag, rather than it creating a visible space between the parent and child element, it creates more space between the `.box` and `.empty` element. This is because the child element (`h1`) which has the margin, collapsed with the parent element' (`.box`) margin.
+
+Think of it as the child element passing its margin to its parent element. But when it passes its margin to the parent element it doesn't add to the parent element's margin, rather it collapses it. By default, the `.box` element has a margin of 0 just like every other element, but if we increase it to `5px` and increase the child element's `margin-top` to `10px`, the margin between `.empty` and `.box` would not be `15px` rather it would be `10px` - because the bigger margin wins when collapsing occurs right?
+
+It's not confusing, trust me. All we are saying here is that margins of nested elements can collapse with the margin of their parent element.
+
+```html
+<style>
+  .box {
+    margin-top: 15px;
+  }
+  h1 {
+    margin-top: 5px;
+  }
+</style>
+<body>
+  <div class="box">
+    <h1>I am not empty</h1>
+  </div>
+</body>
+```
+
+Here is a visual illustration
+
+![example10 illustration](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/88r1qz00isc3af8s1u2l.png)
+
+So no matter the margin you use for the child element, it is just going to collapse it with that of the parent and end up creating more space between the parent element and its sibling (if any). But some things can prevent this from happening
+
+##### Padding
+
+When we add padding to the parent element we can hinder the margin of the child element from collapsing with that of the parent.
+
+```html
+<style>
+  .box {
+    margin-top: 15px;
+    padding-top: 10px;
+  }
+  h1 {
+    margin-top: 15px;
+  }
+</style>
+<body>
+  <div class="box">
+    <h1>I am not empty</h1>
+  </div>
+</body>
+```
+
+![example11 illustration](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qjx2lo6kww9p68wxsk6b.png)
+
+For the margin to not collapse the parent element should have padding that is in the same direction as the margin to collapse. This means if you change the `padding-top` to `padding-bottom` it will not stop the margins from collapsing because the padding is in the opposite direction.
+
+So if you want to specifically hinder only the top of an element's margin from collapsing with its child, you'd have to use the corresponding padding for it. Then, to hinder the all-around margin from not collapsing you just apply padding all-round.
+
+```css
+.box {
+  margin: 15px;
+  padding: 3px;
+}
+h1 {
+  margin: 15px;
+}
+```
+
+The size of the padding doesn't really matter it could be as tiny as `1px`, it would still stop the margins from collapsing. You might ask "can't we use padding on the child elements too?", I will answer that in the next section.
+
+##### Border
+
+Borders do the same thing as padding in this regard. Using any size of border on the parent element will prevent collapsing.
+
+```html
+<style>
+  .box {
+    margin-top: 15px;
+    border: 1px solid red;
+  }
+  h1 {
+    margin-top: 15px;
+  }
+</style>
+<body>
+  <div class="box">
+    <h1>I am not empty</h1>
+  </div>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/LYOKgGP'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+When we add another element to act as a sibling to `.box`, neither the padding nor border of `.box` will stop the margins from collapsing with the new element
+
+```html
+<style>
+  .box {
+    margin-top: 15px;
+    border: 1px solid red;
+  }
+  h1 {
+    margin-top: 15px;
+  }
+  h2 {
+    margin-bottom: 10px;
+  }
+</style>
+<body>
+  <h2>I am new here</h2>
+  <div class="box">
+    <h1>I am not empty</h1>
+  </div>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/mdqZzQM'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+This is because the padding and margin rule only applies to the nested elements of that element. Neither padding nor border can stop the margins of two sibling elements from collapsing simply because they don't have the access to the margins of the element.
+
+Recall that in the box model, we had padding, before border, and finally before margin. The only way padding or border can stop two margins from collapsing is if the padding or border is in between the two margins. And that only occurs between parent and child elements.
+
+Here we have a parent element with a border, the border of this parent element is now above the margin of the child element, while still under the margin of the parent element. So already it's in between the two margins, it won't let them collapse. The illustration below will make it a little clearer.
+
+![margin collapse illustration](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l0a74rio52a0o40uhi40.png)
+
+This is not the case for sibling elements, because the border or padding of any of the elements is not superseding the margins of the other, this is the way it looks in sibling elements.
+
+![margin collapse illustration](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/kpepn84sugib7o1jajst.png)
+
+##### Gap
+
+One other thing that can cause the margin of a parent element from collapsing with that of its child is when there is a gap between them. This occurs when the height/width of the parent's element is beyond that of its child.
+
+```html
+<style>
+  .box {
+    margin-right: 15px;
+    width: 400px;
+  }
+  h1 {
+    margin-right: 15px;
+    width: 250px;
+  }
+</style>
+<body>
+  <div class="box">
+    <h1>I am not empty</h1>
+  </div>
+</body>
+```
+
+![margin collapse illustration](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/azvkwa9ppmhzuzsk4ygk.png)
+
+#### 6. Negative margins can collapse too
+
+Alright, now let's talk about negative margins. Two or more negative margins can collapse together. Just like we've seen with positive margins, the biggest negative margin is used over the smallest.
+
+```html
+<style>
+  .box {
+    margin-bottom: -30px;
+    height: 100px;
+    border: 2px solid #000;
+  }
+  .other-box {
+    margin-top: -15px;
+    height: 100px;
+    border: 2px solid red;
+  }
+</style>
+<body>
+  <div class="box">
+    <p>I am not empty</p>
+  </div>
+  <div class="other-box">
+    <p>I am also not empty</p>
+  </div>
+</body>
+```
+
+<iframe
+  src='https://codepen.io/elijah-trillionz/embed/preview/PoOrxoe'
+  style={{ width: '100%', height: '300px' }}
+></iframe>
+
+Negative margins can also collapse with positive margins, as such the margins will be added together. From our example above, if the margin-top of `other-box` is 15px, then we'd have a `-15px` margin between the two elements.
+
+### Conclusion.
+
+It would save you a lot of stress and confusion if you just understand how it works, do some practice on it to make it stick. People who think margin collapse is not a big deal are those who wind up increasing margin size unnecessarily. When you know where you need your margins to collapse you can easily benefit from its benefits, then when you don't need it to collapse you can stop it from collapsing.
+
+Alright, that's it for this article, let me know what you think about margins collapsing in the comment section. Also, remember you can hit me up on [Twitter @elijahtrillionz](https://twitter.com/elijahtrillionz) if you need me, and please try to follow. Thanks for reading, see you next time.
+
+[![Buy me a coffee](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/m3bttdygfyhm1phhqouv.png)](https://buymeacoffee.com/elijahtrillionz)

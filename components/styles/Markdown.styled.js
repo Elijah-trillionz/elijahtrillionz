@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import { Disclosure, DisclosureButton } from '@reach/disclosure';
+import styled from 'styled-components';
 
 export const StyledArticleTags = styled.div`
   display: flex;
@@ -152,4 +153,8 @@ export const SyntaxHighlighter = styled.pre`
     background-color: ${({ theme }) => theme.colors.primary};
     border-radius: 25px;
   }
+`;
+
+export const StyledDisclosure = styled(DisclosureButton)`
+  background: #f4f4f4;
 `;

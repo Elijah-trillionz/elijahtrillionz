@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -34,6 +34,16 @@ const GlobalStyles = createGlobalStyle`
   a:hover:not(h1 > a) {
     color: ${({ theme }) => theme.colors.secondary};
     text-decoration-color: ${({ theme }) => theme.colors.secondary};
+  }
+
+  .disclosure {
+    background: #f4f4f4;
+    padding: 5px 15px;
+    border-radius: 3px;
+  }
+
+  .disclosure-btn {
+    cursor: pointer;
   }
 `;
 
